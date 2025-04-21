@@ -1,0 +1,6 @@
+fastapi
+sqlalchemy
+uvicorn
+psycopg2
+alembic
+loguru
