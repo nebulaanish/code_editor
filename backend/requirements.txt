@@ -1,6 +1,7 @@
 fastapi
 sqlalchemy
 uvicorn
-psycopg2
+psycopg2-binary
 alembic
 loguru
+python-dotenv
