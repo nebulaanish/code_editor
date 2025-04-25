@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import CodeEditor from "@/components/code-editor";
 import Terminal from "@/components/terminal";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,12 @@ export default function Home() {
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const codeRef = useRef(code);
+
+  // Update the ref whenever code changes
+  useEffect(() => {
+    codeRef.current = code;
+  }, [code]);
 
   const runCode = async () => {
     setIsLoading(true);
@@ -23,7 +29,7 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({ code: codeRef.current }),
       });
 
       const data = await response.json();
@@ -33,8 +39,8 @@ export default function Home() {
       } else {
         setError(data.error);
       }
-    } catch (err) {
-      setError(`Failed to connect to API: ${err.message}`);
+    } catch (err: any) {
+      setError(`Failed to connect to API: ${err?.message || "Unknown error"}`);
     } finally {
       setIsLoading(false);
     }
@@ -62,7 +68,7 @@ export default function Home() {
 
       <div className="flex flex-1 overflow-hidden">
         <div className="w-1/2 border-r border-gray-700">
-          <CodeEditor code={code} onChange={setCode} />
+          <CodeEditor code={code} onChange={setCode} onExecute={runCode} />
         </div>
         <div className="w-1/2">
           <Terminal output={output} error={error} />
